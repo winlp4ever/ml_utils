@@ -1,0 +1,6 @@
+__pycache__/*
+dogs-vs-cats/*
+*.jpg
+*.jpeg
+*.zip
+data/*
