@@ -13,8 +13,6 @@ from keras.preprocessing.image import ImageDataGenerator
 class VerrePlastiqueClassifier(object):
     def __init__(self, im_size, **transforms):
         self.im_size = im_size
-        if data_augmentation:
-            self.data_augment =
         self.net = Sequential([
             # feature extractor
             Conv2D(filters=16, kernel_size=3, strides=1, padding='same', activation='relu', input_shape=(*im_size, 3)),
