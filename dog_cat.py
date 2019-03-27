@@ -29,9 +29,9 @@ class VerrePlastiqueClassifier(object):
         ])
         self.optim = optimizers.SGD(lr=1e-3, decay=1e-6, momentum=0.9, nesterov=True)
 
-    def train(self, X_train, y_train, transforms=ImageDataGenerator(rescale=1./255), nb_epochs=10, batch_size=32):
+    def train(self, X_train, y_train, nb_epochs=10, batch_size=32):
         Y_train = to_categorical(y_train, num_classes=2)
-        self.net.compile(optimizer=self.optim, loss='categorical_crossentropy', metrics=['accuracy'])
+        self.net.compile(optimizer=self.optim, loss='binary_crossentropy', metrics=['accuracy'])
         self.net.fit(transforms.flow(X_train), Y_train, epochs=nb_epochs, batch_size=batch_size)
 
     def classify(self, image):
@@ -63,5 +63,5 @@ if __name__ == '__main__':
         channel_shift_range=9,
         fill_mode='nearest'
     )
-    dogcat.train(X_train, y_train, transforms)
+    dogcat.train(X_train, y_train)
     print(dogcat.classify('dog.jpg'))

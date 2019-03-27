@@ -85,6 +85,19 @@ def to_nparray(dir: str, size, channels_first=False, labels=None, shuffle=True, 
     return X
 
 
+def subdivide(dir: str, classes: list):
+    """divide all images in `dir` to subfolders with names in classes
+    dir
+    |---class-name-1
+        |---im-name-1.jpg
+        |---...
+    |---class-name-2
+        |---...
+    |---...
+    """
+    raise Exception("Unimplemented Error!")
+
+
 if __name__ == '__main__':
     dir_name = 'dogs-vs-cats/train'
     labels = {'dog': 0, 'cat': 1}
