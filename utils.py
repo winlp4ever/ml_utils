@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import glob
 import os
 import random
+import shutil
 
 
 def one_hot_encoding(labels, num_classes=None):
@@ -85,7 +86,7 @@ def to_nparray(dir: str, size, channels_first=False, labels=None, shuffle=True, 
     return X
 
 
-def subdivide(dir: str, classes: list):
+def subdivide(dir: str, classes: list, verbose=True):
     """divide all images in `dir` to subfolders with names in classes
     dir
     |---class-name-1
@@ -95,18 +96,26 @@ def subdivide(dir: str, classes: list):
         |---...
     |---...
     """
-    raise Exception("Unimplemented Error!")
+    for name in classes:
+        subdir = os.path.join(dir, name)
+        if not os.path.exists(subdir):
+            os.makedirs(subdir)
+
+    for fn in glob.glob(os.path.join(dir, '*')):
+        if not os.path.isdir(fn):
+            basename = os.path.basename(fn)
+            if verbose:
+                print('handling file {} ...'.format(basename), end='\r', flush=True)
+            for n in classes:
+                if n in basename:
+                    shutil.move(fn, os.path.join(dir, n))
+                    break
 
 
 if __name__ == '__main__':
     dir_name = 'dogs-vs-cats/train'
     labels = {'dog': 0, 'cat': 1}
     revers = {i: w for w, i in labels.items()}
-    X, y = to_nparray(dir_name, size=(28, 28), labels=labels, verbose=True)
-    print(X.shape)
-    print(y[:5])
-    im = X[12]
-    print(im.shape)
-    plt.imshow(im)
-    plt.show()
-    print("It's a : {}".format(revers[y[12]]))
+    #X, y = to_nparray(dir_name, size=(28, 28), labels=labels, verbose=True)
+    classes = ['dog', 'cat']
+    subdivide('dogs-vs-cats/train', classes)

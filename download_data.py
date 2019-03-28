@@ -51,5 +51,5 @@ def down_fr_url(urls: list, save_dir: str='', unzip: bool=False):
 if __name__ == '__main__':
     test = 'funny'
     print(retri_fn_url(test))
-    urls = ['']
-    down_fr_url(urls, unzip=True)
+    urls = ['https://www.dropbox.com/s/h4pypk9s2mxzzme/checkpoint-3.pth.tar?dl=1']
+    down_fr_url(urls, unzip=False)
