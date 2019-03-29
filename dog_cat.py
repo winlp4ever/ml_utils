@@ -51,17 +51,5 @@ if __name__ == '__main__':
     print(X_train.shape)
     dogcat = VerrePlastiqueClassifier((32, 32))
     print(dogcat.net.summary())
-
-    transforms = ImageDataGenerator(
-        rescale=1. / 255,
-        rotation_range=40,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
-        shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True,
-        channel_shift_range=9,
-        fill_mode='nearest'
-    )
     dogcat.train(X_train, y_train)
     print(dogcat.classify('dog.jpg'))
