@@ -78,6 +78,7 @@ def down_fr_url(urls: list, save_dir: str='', unzip: bool=False):
             urlretrieve(url, save_path, reporthook=progress)
             print('\n')
             if unzip:
+                print('Extracting file ...')
                 zip = zipfile.ZipFile(save_path)
                 zip.extractall('.')
                 zip.close()
