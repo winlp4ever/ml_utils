@@ -10,7 +10,7 @@ from keras import initializers
 from keras.preprocessing.image import ImageDataGenerator
 
 
-class VerrePlastiqueClassifier(object):
+class DogCat(object):
     def __init__(self, im_size, **transforms):
         self.im_size = im_size
         self.net = Sequential([
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     X_train, y_train = to_nparray(im_dir, size=(32, 32), verbose=True, labels=labels)
     print(np.sum(y_train))
     print(X_train.shape)
-    dogcat = VerrePlastiqueClassifier((32, 32))
+    dogcat = DogCat((32, 32))
     print(dogcat.net.summary())
     dogcat.train(X_train, y_train)
     print(dogcat.classify('dog.jpg'))
