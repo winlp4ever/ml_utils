@@ -1,7 +1,7 @@
 def convolution(x: list, k: list) -> list:
     n = int(len(x) ** 0.5)
     l = int(len(k) ** 0.5)
-    assert l % 2 == 1
+    assert l % 2 == 1 # for now, this func only works with len(k) odd
     ans = []
     # nb of zeros padding at each side
     padding = l // 2
