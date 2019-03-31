@@ -4,8 +4,11 @@ from urllib.request import urlretrieve
 from urllib.parse import urlparse
 import os, sys
 import zipfile
-import math
+from math import ceil
 import time
+
+
+BYTES_PER_MB = 1024 * 1024
 
 
 def error_handle():
@@ -40,7 +43,7 @@ def retri_fn_url(url: str) -> str:
 
 
 def down_fr_url(urls: list, save_dir: str='', unzip: bool=False):
-    def indicator(quantity, width=12):
+    def indicator(quantity, width=10):
         if quantity > 1024:
             return '{:.0f} MB/s'.format(quantity / 1024).rjust(width)
         return '{:.0f} KB/s'.format(quantity).rjust(width)
@@ -50,13 +53,18 @@ def down_fr_url(urls: list, save_dir: str='', unzip: bool=False):
         if count == 0:
             start_time = time.time()
         if count % 100 == 99 or (count + 1) * block_size >= total_size:
-            percent = (count * block_size) / total_size * 100.
-            pos = int(math.ceil(percent / 100 * 20))
+            percent = (count * block_size) / total_size
+            down_size_in_mb = count * block_size // BYTES_PER_MB
+            total_size_in_mb = total_size // BYTES_PER_MB
+            pos = int(ceil(percent * 20))
             down_bar = '[' + '=' * max(pos - 1, 0) + '>' + (20 - pos) * '-' + ']'
+            if (count + 1) * block_size >= total_size:
+                down_bar = '[' + '=' * 20 +']'
+                down_size_in_mb = total_size_in_mb
 
             print('{} {}/{} MB {} {}'.format(down_bar,
-                    str(min((count + 1) * block_size, total_size) // (1024 * 1024)).rjust(6), # right align text
-                    total_size // (1024 * 1024), ('(%2.1f%%)'%percent).rjust(8),
+                    str(down_size_in_mb).rjust(len(str(total_size_in_mb))), # right align text
+                    total_size_in_mb, ('(%2.1f%%)'%(percent * 100)).rjust(8),
                     indicator((count * block_size) / (time.time() - start_time + 1e-3) / 1024)),
                 flush=True, end='\r')
     for url in urls:
