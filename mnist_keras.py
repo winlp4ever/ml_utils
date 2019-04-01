@@ -1,6 +1,8 @@
 from keras.models import Sequential
 from keras.layers import Dense, Conv2D, MaxPooling2D, Flatten, Dropout
 from keras import regularizers, optimizers
+import numpy as np
+from sklearn.utils import shuffle as shuffle_
 import pandas as pd
 import os
 
@@ -16,7 +18,7 @@ num_classes = 10
 
 model = Sequential([
         # feature extractor
-        Conv2D(filters=32, input_shape=(*im_size, 3), **conv_kwargs, **kwargs),
+        Conv2D(filters=32, input_shape=(*im_size, 1), **conv_kwargs, **kwargs),
         MaxPooling2D(pool_size=2),
         Conv2D(filters=32, **conv_kwargs, **kwargs),
         MaxPooling2D(pool_size=2),
@@ -39,8 +41,23 @@ data_path = os.path.join('data', 'mnist')
 data_train = pd.read_csv(os.path.join(data_path, 'mnist_train.csv'))
 data_test = pd.read_csv(os.path.join(data_path, 'mnist_test.csv'))
 
-def load_and_shuffle(data):
-    print(data.info())
+def load_and_shuffle(data, im_size, shuffle=True):
+    """Read csv into numpy and reshape to match image size.
+    Works only for mnist, change image size for each use case
+    """
+    y, X = np.split(data.values, (1,), axis=1)
+    Y = np.eye(num_classes)[y[:, 0]]
+    X = X.reshape(-1, *im_size, 1)
+    if shuffle:
+        return shuffle_(X, Y)
+    return X, Y
 
-load_and_shuffle(data_train)
-load_and_shuffle(data_test)
+X_train, Y_train = load_and_shuffle(data_train, im_size)
+X_test, Y_test = load_and_shuffle(data_test, im_size)
+
+# train and evaluate model
+nb_epochs = 10
+batch_size = 128
+
+model.fit(X_train, Y_train, epochs=nb_epochs, batch_size=batch_size, validation_data=(X_test, Y_test))
+model.save_weights('mnist.h5')
