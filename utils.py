@@ -86,7 +86,7 @@ def to_nparray(dir: str, size, channels_first=False, labels=None, shuffle=True, 
     return X
 
 
-def subdivide(dir: str, classes: list, verbose=True):
+def subdivide(dir: str, classes: list, save_dir=None, verbose=True, split_train_val: bool=False, train_ratio: float=0.7):
     """divide all images in `dir` to subfolders with names in classes
     dir
     |---class-name-1
@@ -96,10 +96,25 @@ def subdivide(dir: str, classes: list, verbose=True):
         |---...
     |---...
     """
-    for name in classes:
-        subdir = os.path.join(dir, name)
-        if not os.path.exists(subdir):
-            os.makedirs(subdir)
+    if save_dir is None:
+        save_dir = dir
+    else:
+        assert isinstance(save_dir, str)
+
+    if split_train_val:
+        random.seed(None)
+        assert 0 < train_ratio < 1, 'ratio of train set must be between 0 and 1'
+        subdirs = ['train', 'val']
+        for name in classes:
+            for fol in subdirs:
+                subsubdir = os.path.join(save_dir, fol, name)
+                if not os.path.exists(subsubdir):
+                    os.makedirs(subsubdir)
+    else:
+        for name in classes:
+            subdir = os.path.join(save_dir, name)
+            if not os.path.exists(subdir):
+                os.makedirs(subdir)
 
     for fn in glob.glob(os.path.join(dir, '*')):
         if not os.path.isdir(fn):
@@ -108,14 +123,20 @@ def subdivide(dir: str, classes: list, verbose=True):
                 print('handling file {} ...'.format(basename), end='\r', flush=True)
             for n in classes:
                 if n in basename:
-                    shutil.move(fn, os.path.join(dir, n))
+                    if split_train_val:
+                        if random.random() < train_ratio:
+                            shutil.move(fn, os.path.join(save_dir, 'train', n))
+                        else:
+                            shutil.move(fn, os.path.join(save_dir, 'val', n))
+                    else:
+                        shutil.move(fn, os.path.join(save_dir, n))
                     break
 
 
 if __name__ == '__main__':
-    dir_name = 'dogs-vs-cats/train'
+    dir_name = 'data/dogcat/train'
     labels = {'dog': 0, 'cat': 1}
     revers = {i: w for w, i in labels.items()}
     #X, y = to_nparray(dir_name, size=(28, 28), labels=labels, verbose=True)
     classes = ['dog', 'cat']
-    subdivide('dogs-vs-cats/train', classes)
+    subdivide(dir_name, classes=classes, save_dir='data/dogcat', split_train_val=True)
