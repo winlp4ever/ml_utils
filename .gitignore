@@ -4,3 +4,4 @@ dogs-vs-cats/*
 *.jpeg
 *.zip
 data/*
+.ipynb_checkpoints/*
