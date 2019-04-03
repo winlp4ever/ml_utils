@@ -47,17 +47,18 @@ def time_format(secs: int):
     s = '{}s'.format(secs % 60).zfill(3)
     if secs < 60:
         return s.rjust(6);
-    m = "{}'".format(secs // 60).zfill(3)
-    if secs < 3600:
+    secs = secs // 60
+    m = '{}\''.format(secs % 60).zfill(3)
+    if secs < 60:
         return (m + s).rjust(6)
-    h = '{}h'.format(secs // 3600).zfill(3)
-    if secs < 3600 * 24:
+    secs = secs // 60
+    h = '{}h'.format(secs % 24).zfill(3)
+    if secs < 24:
         return (h + m).rjust(6)
-    if secs > 2 * 24 * 3600:
+    if secs > 2 * 24:
         return 'uknown'
-    d = '{}d'.format(secs // (3600 * 24))
+    d = '{}d'.format(secs // 24)
     return (d + h).rjust(6)
-
 
 
 def down_fr_url(urls: list, save_dir: str='', unzip: bool=False):
